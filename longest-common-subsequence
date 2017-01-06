@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<script>
+    function deleteAt(string, position) {
+        var stringA = string.substr(0, position);
+        var stringB = string.substr(position + 1);
+        return stringA + stringB;
+    }
+    String.prototype.deleteAt = function (position) {
+        var stringA = this.substr(0, position);
+        var stringB = this.substr(position + 1);
+        return stringA + stringB;
+    };
+    String.prototype.swap = function (start, end) {
+        var charA = this.charAt(start);
+        var charB = this.charAt(end);
+        var str = '';
+        for (var i = 0; i < this.length; i++) {
+            if (i == start) {
+                str += charB;
+            } else {
+                if (i == end) {
+                    str += charA;
+                } else {
+                    str += this[i];
+                }
+
+            }
+
+        }
+        return str;
+    };
+    /*
+    计算序列的全阶乘
+    */
+    function print(stringA) {
+        if (stringA.length <= 1) {
+            return [stringA];
+        }
+        var array = []
+        if (stringA.length == 2) {
+            if (stringA[0] == stringA[1]) {
+                array = [stringA];
+                return array;
+            }
+            var data = stringA.swap(0, 1);
+            array = [stringA, data];
+            return array;
+
+        }
+        var hasSame = false;
+        for (var i = 0; i < stringA.length; i++) {
+
+            for (var j = 0; j < i; j++) {
+                if (stringA[i] == stringA[j]) {
+                    hasSame = true;
+                    break;
+                }
+            }
+            if (hasSame) {
+                hasSame = false;
+                continue;
+            }
+            var charHead = stringA.charAt(i);
+            var leftString = stringA.deleteAt(i);
+            var arrayLeft = print(leftString);
+            for (var x in arrayLeft) {
+                array.push(charHead + arrayLeft[x]);
+            }
+        }
+        return array;
+    }
+    function getPrint(stringx) {
+
+        var date = new Date();
+        var time = date.getTime();
+        var data = print(stringx);
+//        for (var i in data) {
+//            console.log(data[i]);
+//        }
+        console.log(data.length);
+        console.log('diff time', new Date().getTime() - time);
+    }
+    //判断两个字符是否相同,例如Abc 和Acb是一样的,而Abcc是不一样的
+    function stringIsSame(stringA, stringB) {
+        if (stringA.length != stringB.length) {
+            return false;
+        }
+        var A = stringA.split("").sort().join("");
+        var B = stringB.split("").sort().join("");
+        return B == A;
+
+    }
+    function showComps(stringA) {
+        if (stringA.length == 1) {
+            return [stringA];
+        }
+        var array = [];
+        var headHasSame = false;
+        for (var i = 0; i < stringA.length; i++) {
+            var charHead = stringA.charAt(i);
+            for (var index1 = 0; index1 < array.length; index1++) {
+                if (array[index1] == charHead) {
+                    headHasSame = true;
+                    break;
+                }
+            }
+            if (!headHasSame) {
+                array.push(charHead);
+            }
+            headHasSame = false;
+            if (i + 1 >= stringA.length) {
+                return array;
+            }
+            var leftString = stringA.substr(i + 1);
+            var arrayLeft = showComps(leftString);
+            var hasSame = false;
+            for (var index = 0; index < arrayLeft.length; index++) {
+//                for (var index1 = 0; index1 < array.length; index1++) {
+//                    if (stringIsSame(array[index1], charHead + arrayLeft[index])) {
+//                        hasSame = true;
+//                        break;
+//                    }
+//                }
+//                if (!hasSame) {
+                array.push(charHead + arrayLeft[index]);
+//                }
+                hasSame = false;
+            }
+        }
+        return array;
+    }
+    /**
+     * 用蛮力法计算最长公共子序列
+     * @param stringA
+     * @param stringB
+     * @returns {number}
+     */
+    function getLcs(stringA, stringB) {
+        var childComp = showComps(stringA);
+        var childCompB = showComps(stringB);
+        var maxLength = 0;
+        for (var i = 0; i < childComp.length; i++) {
+            for (var j = 0; j < childCompB.length; j++) {
+                var childAString = childComp[i];
+                var childBString = childCompB[j];
+                if ((childAString == childBString )) {
+                    if (maxLength < childBString.length) {
+                        maxLength = childBString.length;
+                    }
+                    break;
+                }
+
+            }
+        }
+        return maxLength;
+    }
+    var data = showComps('dc');
+    console.log(getLcs('abcd1', 'acd1'));
+    console.log('length=', data.length);
+</script>
+
+</body>
+</html>
